@@ -1,7 +1,12 @@
+import dotenv from 'dotenv'
+
+dotenv.config()
 const express = require("express")
 const cors = require("cors");
 const mysql = require("mysql")
 const app = express()
+
+const PORT = prcoess.env.PORT || 1000;
 
 app.use(cors());
 
@@ -14,11 +19,13 @@ const db =mysql.createConnection({
     database: "store"
 })
 
-app.listen(8081, () => {
-    console.log("listening");
+app.listen(PORT, () => {
+    console.log(`server is running on port ${PORT}`);
 })
 
-app.get("/",(req,res)=> {
+// all products
+
+app.get("/api/products",(req,res)=> {
     const sql = "SELECT * FROM product";
     db.query(sql,(err,data) =>{
         if(err) 
@@ -27,6 +34,19 @@ app.get("/",(req,res)=> {
         
     }) 
 })
+
+// singleproduct
+app.get("/product/:id",(req,res)=> {
+    id = 2
+    const sql = "SELECT * FROM `product` WHERE `product_id` = ?";
+    db.query(sql,[req.params.id],(err,data) =>{
+        if(err) 
+            return res.json("Error");
+        return res.json(data);
+        
+    }) 
+})
+
 
 app.post('/createProduct',(req, res) => {
     const sql = "INSERT INTO product (`product_id`, `name`, `description`, `discount_id`, `quantity`, `category_id`, `price`) VALUES (?)";
