@@ -28,17 +28,20 @@ CustomerRoute.get('/readCustomers', async (req, res) => {
     try {
         const sql = 'SELECT * FROM customer';
         const results = await db.query(sql);
-        res.json(results);
+        console.log(results); // Add this line to check the structure of results
+        res.json(results[0]); // Assuming the query results are in the first element
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
+
 // reading single customer data
 CustomerRoute.get('/readCustomer', async (req, res) => {
     try {
         const sql = 'SELECT * FROM customer WHERE customer_id = ?';
         const result = await db.query(sql, [req.params.id]);
-        res.json(result);
+        console.log(result);
+        res.json(result[0]);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
