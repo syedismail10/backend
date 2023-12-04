@@ -30,6 +30,8 @@ app.use('/api/products',productRoute)
 app.use('/api/customer',customerRoute)
 
 
+
+
 // api to get user order with order id
 app.get("/user/:orderid",asyncHandler( async (req,res)=> {
     const sql = 'SELECT o.order_id, o.amount,o.customer_id FROM order_details o JOIN customer c ON o.customer_id = c.customer_id WHERE c.customer_id = ?';
