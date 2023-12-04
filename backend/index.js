@@ -1,12 +1,12 @@
 import dotenv from 'dotenv'
-
+import express from 'express'
+import cors from 'cors'
+import mysql from 'mysql'
 dotenv.config()
-const express = require("express")
-const cors = require("cors");
-const mysql = require("mysql")
+
 const app = express()
 
-const PORT = prcoess.env.PORT || 1000;
+const PORT = process.env.PORT || 1000;
 
 app.use(cors());
 
