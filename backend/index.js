@@ -4,6 +4,7 @@ import cors from 'cors'
 import mysql from 'mysql'
 import asyncHandler from 'express-async-handler'
 import productRoute from './Routes/ProductRoutes.js'
+import customerRoute from './Routes/CustomerRoutes.js'
 
 dotenv.config()
 
@@ -25,6 +26,8 @@ const db =mysql.createConnection({
 // APIs we use 
 
 app.use('/api/products',productRoute)
+
+app.use('/api/customer',customerRoute)
 
 
 // api to get user order with order id
