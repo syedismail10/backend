@@ -4,7 +4,7 @@ import db from '../db/dbConnection.js'
 const productRoute =express.Router()
 productRoute.use(express.json())
 
-// all products
+// all products tested
 
 productRoute.get("/",async(req,res)=> {
     const sql = "SELECT * FROM product";
@@ -16,7 +16,7 @@ productRoute.get("/",async(req,res)=> {
     }) 
 })
 
-// singleproduct
+// singleproduct tested
 productRoute.get("/product", async(req,res)=> {
     const sql = "SELECT * FROM `product` WHERE `product_id` = ?";
     db.query(sql,[req.query.id],(err,data) =>{
@@ -27,7 +27,7 @@ productRoute.get("/product", async(req,res)=> {
     }) 
 })
 
-// insert product can be done by admin
+// insert product can be done by admin tested
 productRoute.post('/', async(req, res) => {
     const sql = "INSERT INTO product (`product_id`, `name`, `description`, `discount_id`, `quantity`, `category_id`, `price`) VALUES (?,?,?,?,?,?,?)";
     const values = [
@@ -50,16 +50,13 @@ productRoute.post('/', async(req, res) => {
     .then(data => res.json({ message: "Product inserted successfully", data }))
     .catch(err => res.status(500).json({ error: err.message }));
 });
-    // db.query(sql,[values],(err,data) => {
-    //     if (err) return res.json("Error");
-    //     return res.json(data);
-    // })
 
-// update product details
-productRoute.put('/products/:id', (req, res) => {
-    const { name, email, ph_num, amt_spend, password } = req.body;
-    const sql = 'UPDATE product SET name = ?, email = ?, ph_num = ?, amt_spend = ?, password = ? WHERE product_id = ?';
-    db.query(sql, [name, email, ph_num, amt_spend, password, req.params.id], (err, result) => {
+// update product details tested now
+productRoute.put('/update', async(req, res) => {
+    const product_id = req.query.product_id;
+    const {name, description, discount_id, quantity, category_id, price } = req.body;
+    const sql = 'UPDATE product SET name = ?, description = ?, discount_id = ?, quantity = ?, category_id = ?, price rsrs= ? WHERE product_id = ?';
+    db.query(sql, [name, description,discount_id, quantity, category_id, price,product_id], (err, result) => {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
@@ -67,18 +64,17 @@ productRoute.put('/products/:id', (req, res) => {
     });
 });
 
-// delete product
+// delete product tested
 
-productRoute.delete('/products/:id', (req, res) => {
+productRoute.delete('/', async(req, res) => {
+    const product_id = req.query.product_id
     const sql = 'DELETE FROM product WHERE product_id = ?';
-    db.query(sql, [req.params.id], (err, result) => {
+    db.query(sql, [product_id], (err, result) => {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
-        res.json({ message: 'Product deleted' });
+        res.json({ message:`${product_id} Product deleted` });
     });
 });
-
-
 
 export default productRoute
