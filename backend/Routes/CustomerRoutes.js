@@ -1,6 +1,6 @@
 import express from 'express'
 //import asyncHandler from 'express-async-handler'
-import db from '../db/dbConnection';
+import db from '../db/dbConnection.js';
 
 const CustomerRoute =express.Router()
 
