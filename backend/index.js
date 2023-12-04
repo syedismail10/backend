@@ -37,7 +37,6 @@ app.get("/api/products",(req,res)=> {
 
 // singleproduct
 app.get("/product/:id",(req,res)=> {
-    id = 2
     const sql = "SELECT * FROM `product` WHERE `product_id` = ?";
     db.query(sql,[req.params.id],(err,data) =>{
         if(err) 
@@ -66,3 +65,11 @@ app.post('/createProduct',(req, res) => {
 
 })
 
+app.get("/user/:orderid",(req,res)=> {
+    const sql = 'SELECT o.order_id, o.amount,o.customer_id FROM order_details o JOIN customer c ON o.customer_id = c.customer_id WHERE c.customer_id = ?';
+    db.query(sql,[req.params.orderid],(err,data) =>{
+        if(err) 
+            return res.json("Error");
+        return res.json(data);    
+    }) 
+})
