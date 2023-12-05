@@ -46,6 +46,33 @@ CustomerRoute.get('/readCustomer', async (req, res) => {
     }
 });
 
+CustomerRoute.post('/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        // It's critical to hash passwords – never store or compare plain-text passwords
+        // Here, you would hash the provided password and compare it to the hashed password in the database
+        // For demonstration, the plain-text password is used directly (which is insecure)
+        const sql = 'SELECT * FROM customer WHERE email = ? AND password = ?';
+        const values = [email, password];
+
+        const [result] = await db.query(sql, values);
+        
+        if (result.length > 0) {
+            console.log(result);
+            // You might want to exclude the password when sending back the user info
+            const { password, ...customerInfo } = result[0];
+            res.json(customerInfo);
+        } else {
+            res.status(401).json({ message: 'Invalid email or password' });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
 
 CustomerRoute.put('/update', async (req, res) => {
     try {
