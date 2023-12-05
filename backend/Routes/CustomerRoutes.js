@@ -2,12 +2,12 @@ import express from 'express'
 //import asyncHandler from 'express-async-handler'
 import db from '../db/dbConnection.js';
 
-
 const CustomerRoute =express.Router()
 
 CustomerRoute.post('/register', async (req, res) => {
     try {
-        const sql = 'INSERT INTO customer (name, email,ph_num,amt_spend,password,address, city) VALUES (?, ?, ?, ?,?,?,?)';
+        const { amt_spend, customer_id, email, name, password, ph_num } = req.body;
+        const sql = 'INSERT INTO customer (amt_spend, customer_id, email, name, password, ph_num) VALUES (?, ?, ?, ?, ?, ?)';
         const values = [
             req.body.amt_spend,
             req.body.customer_id,
@@ -15,11 +15,10 @@ CustomerRoute.post('/register', async (req, res) => {
             req.body.name,
             req.body.password,
             req.body.ph_num,
-            amt_spend,
-            
+    
         ]
-        const result = await db.query(sql, [values]);
-        res.status(201).json({ message: 'Customer registered added successfully', customerId: result.insertId });
+        const result = await db.query(sql, [amt_spend, customer_id, email, name, password, ph_num]);
+        res.status(201).json({ message: 'Customer product added successfully', customerId: result.insertId });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -70,11 +69,6 @@ CustomerRoute.delete('/deleteCustomer', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
-
-
-
-
-
 
 
 export default CustomerRoute

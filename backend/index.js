@@ -4,7 +4,9 @@ import cors from 'cors'
 import mysql from 'mysql'
 import asyncHandler from 'express-async-handler'
 import productRoute from './Routes/ProductRoutes.js'
-import customerRoute from './Routes/CustomerRoutes.js'
+import customerRoute from './Routes/customerRoutes.js'
+import orderRoute from './Routes/OrderRoutes.js'
+import discRoute from './Routes/DiscountRoutes.js'
 
 dotenv.config()
 
@@ -29,8 +31,9 @@ app.use('/api/products',productRoute)
 
 app.use('/api/customer',customerRoute)
 
+app.use('/api/order',orderRoute)
 
-
+app.use('/api/discount',discRoute)
 
 // api to get user order with order id
 app.get("/user/:orderid",asyncHandler( async (req,res)=> {
@@ -44,5 +47,5 @@ app.get("/user/:orderid",asyncHandler( async (req,res)=> {
 ))
 
 app.listen(PORT, () => {
-    console.log(`server is running on port ${PORT}`);
+    console.log('server is running on port ${PORT}');
 })
