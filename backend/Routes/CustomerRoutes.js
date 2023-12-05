@@ -4,6 +4,7 @@ import db from '../db/dbConnection.js';
 
 const CustomerRoute =express.Router()
 
+<<<<<<< HEAD
 CustomerRoute.post('/register', async (req, res) => {
     try {
         const { amt_spend, customer_id, email, name, password, ph_num } = req.body;
@@ -22,7 +23,25 @@ CustomerRoute.post('/register', async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
+=======
+CustomerRoute.post('/register', (req, res) => {
+    const { name, email, ph_num, password, address, city } = req.body;
+    const amt_spend = 0; // assuming this is the default value for new customers
+
+    const sql = 'INSERT INTO customer (name, email, ph_num, amt_spend, password, address, city) VALUES (?, ?, ?, ?, ?, ?, ?)';
+    const values = [name, email, ph_num, amt_spend, password, address, city];
+
+    db.query(sql, values, (err, result) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Internal Server Error' });
+        }
+        res.status(201).json({ message: 'Customer registered successfully', customerId: result.insertId });
+    });
+>>>>>>> 5cc41a98702564a12b6863613704ae0900ba8fd3
 });
+
+
 //reading all customers data
 CustomerRoute.get('/readCustomers', async (req, res) => {
     try {
