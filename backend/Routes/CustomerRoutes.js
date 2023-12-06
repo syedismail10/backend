@@ -28,27 +28,69 @@ CustomerRoute.post('/register', async (req, res) => {
 
 
 //reading all customers data
-CustomerRoute.get('/readCustomers', async (req, res) => {
-    try {
-        const sql = 'SELECT * FROM customer';
-        const results = await db.query(sql);
-        console.log(results); // Add this line to check the structure of results
-        res.json(results[0]); // Assuming the query results are in the first element
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+CustomerRoute.get('/readCustomers', (req, res) => {
+    const sql = 'SELECT * FROM customer'; // Assuming your table is named 'customer'
+
+    db.query(sql, (error, results) => {
+        if (error) {
+            console.error('Database error:', error);
+            return res.status(500).json({ error: 'Internal Server Error' });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'No customers found' });
+        }
+
+        res.json(results);
+    });
 });
 
 // reading single customer data
-CustomerRoute.get('/readCustomer', async (req, res) => {
-    try {
-        const sql = 'SELECT * FROM customer WHERE customer_id = ?';
-        const result = await db.query(sql, [req.params.id]);
-        console.log(result);
-        res.json(result[0]);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
+CustomerRoute.get('/readCustomer', (req, res) => {
+    const customerId = req.query.id;
+
+    if (!customerId) {
+        return res.status(400).json({ error: 'Customer ID is required' });
     }
+
+    const sql = 'SELECT * FROM customer WHERE customer_id = ?'; // Replace 'customer_id' with your actual column name for the customer ID
+
+    db.query(sql, [customerId], (error, results) => {
+        if (error) {
+            console.error('Database error:', error);
+            return res.status(500).json({ error: 'Internal Server Error' });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'Customer not found' });
+        }
+
+        res.json(results[0]);
+    });
+});
+
+CustomerRoute.put('/updateCustomer/:id', async (req, res) => {
+    //const customerId = req.query.id;
+    const { email, name, ph_num } = req.body; // Replace with actual fields of your customer table
+
+    // if (!customerId) {
+    //     return res.status(400).json({ error: 'Customer ID is required' });
+    // }
+
+    const query = 'UPDATE customer SET email = ?, name = ?, ph_num= ?'
+
+    db.query(query, [email, name, ph_num], (error, results) => {
+        if (error) {
+            console.error('Database error:', error);
+            return res.status(500).json({ error: 'Internal Server Error' });
+        }
+
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ error: 'Customer not found' });
+        }
+
+        res.json({ message: 'Customer updated successfully' });
+    });
 });
 
 CustomerRoute.post('/login', async (req, res) => {
@@ -83,6 +125,7 @@ CustomerRoute.post('/login', async (req, res) => {
 
 
 
+<<<<<<< HEAD
 
 
 CustomerRoute.put('/update', async (req, res) => {
@@ -96,15 +139,30 @@ CustomerRoute.put('/update', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+=======
+//tested 
+CustomerRoute.delete('/deleteCustomer/:id', (req, res) => {
+    const customerId = req.params.id;
+>>>>>>> 1634f04ad3bef28d29eeb2920c4b9a284743c536
 
-CustomerRoute.delete('/deleteCustomer', async (req, res) => {
-    try {
-        const sql = 'DELETE FROM customer WHERE customer_id = ?';
-        await db.query(sql, [req.params.id]);
-        res.json({ message: 'Customer product deleted successfully' });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
+    if (!customerId) {
+        return res.status(400).json({ error: 'Customer ID is required' });
     }
+
+    const sql = 'DELETE FROM customer WHERE customer_id = ?'; // Replace 'customer_id' with your actual column name for the customer ID
+
+    db.query(sql, [customerId], (error, results) => {
+        if (error) {
+            console.error('Database error:', error);
+            return res.status(500).json({ error: 'Internal Server Error' });
+        }
+
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ error: 'Customer not found or already deleted' });
+        }
+
+        res.json({ message: 'Customer deleted successfully' });
+    });
 });
 
 

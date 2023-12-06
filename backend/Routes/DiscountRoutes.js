@@ -3,7 +3,7 @@ import express from 'express'
 import db from '../db/dbConnection.js';
 const discRoute =express.Router()
 
-// Create Discount
+// Create Discount //tested
 discRoute.post('/createdisc', async (req, res) => {
     const { discount_id,active, name, percent } = req.body;
   
@@ -38,7 +38,7 @@ discRoute.post('/createdisc', async (req, res) => {
     });
   });
   
-  // Update Discount by ID
+  // Update Discount by ID //tested
   discRoute.put('/updatedisc', async (req, res) => {
     const discountId = req.query.id;
     const { active, name, percent } = req.body;
@@ -59,7 +59,7 @@ discRoute.post('/createdisc', async (req, res) => {
     });
   });
   
-  // Delete Discount by ID
+  // Delete Discount by ID //tested
   discRoute.delete('/disc_del', async (req, res) => {
     const discountId = req.query.id;
   
