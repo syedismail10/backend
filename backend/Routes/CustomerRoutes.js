@@ -125,7 +125,6 @@ CustomerRoute.post('/login', async (req, res) => {
 
 
 
-<<<<<<< HEAD
 
 
 CustomerRoute.put('/update', async (req, res) => {
@@ -139,11 +138,9 @@ CustomerRoute.put('/update', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
-=======
 //tested 
 CustomerRoute.delete('/deleteCustomer/:id', (req, res) => {
     const customerId = req.params.id;
->>>>>>> 1634f04ad3bef28d29eeb2920c4b9a284743c536
 
     if (!customerId) {
         return res.status(400).json({ error: 'Customer ID is required' });
