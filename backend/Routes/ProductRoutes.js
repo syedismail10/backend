@@ -76,5 +76,33 @@ productRoute.delete('/', async(req, res) => {
         res.json({ message:`${product_id} Product deleted` });
     });
 });
+// search api on categoryid and name //tested
+productRoute.get('/search', async(req, res) => {
+    // You can add more query parameters as needed
+    const { name, category_id } = req.query;
+    let sql = 'SELECT * FROM product WHERE 1=1';
+    const values = [];
+
+    // Dynamically build the query based on provided search parameters
+    if (name) {
+        sql += ' AND name LIKE ?';
+        values.push(`%${name}%`);
+    }
+    if (category_id) {
+        sql += ' AND category_id = ?';
+        values.push(category_id);
+    }
+
+    // Execute the query
+    db.query(sql, values, (err, result) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        if (result.length === 0) {
+            return res.status(404).json({ message: 'No products found' });
+        }
+        res.json(result);
+    });
+});
 
 export default productRoute

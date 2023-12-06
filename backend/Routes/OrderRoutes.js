@@ -2,7 +2,8 @@ import express from 'express'
 //import asyncHandler from 'express-async-handler'
 import db from '../db/dbConnection.js';
 const orderRoute =express.Router()
-//create order
+
+//create order //tested
 orderRoute.post('/create', async (req, res) => {
     try {
       const { order_id, product_id, quantity } = req.body;
@@ -21,7 +22,7 @@ orderRoute.post('/create', async (req, res) => {
     }
   });
 
-// Read Order Items by Order ID   not working
+// Read Order Items by Order ID   not working //not tested
 orderRoute.get('/readorder', async (req, res) => {
     const orderId = req.query.order_id;
   
@@ -44,7 +45,7 @@ orderRoute.get('/readorder', async (req, res) => {
       res.json({ order_items: results });
     });
   });
- // Update Order Item by ID
+ // Update Order Item by ID //tested
  orderRoute.put('/updateorder', async (req, res) => {
     const orderItemId = req.query.order_id;
     const { quantity } = req.body.quantity;
