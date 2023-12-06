@@ -49,10 +49,7 @@ app.get("/user/:orderid",asyncHandler( async (req,res)=> {
 ))
 
 app.listen(PORT, () => {
-<<<<<<< HEAD
+
     console.log(`Server is running on port ${PORT}`);
 });
-=======
-    console.log(`server is running on port ${PORT}`);
-})
->>>>>>> 5ad5df0da4beab71f784b8b5c97a4c145990012d
+
