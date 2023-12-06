@@ -20,7 +20,7 @@ CustomerRoute.post('/register', async (req, res) => {
     
         // ]
         const result = await db.query(sql, [customer_id,name, email,ph_num, amt_spend,password,address,city]);
-        res.status(201).json({ message: 'Customer product added successfully', customerId: result.insertId });
+        res.status(201).json({ message: 'Customer registration successfully', customerId: result.insertId });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -54,29 +54,33 @@ CustomerRoute.get('/readCustomer', async (req, res) => {
 CustomerRoute.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
+
         const sql = 'SELECT * FROM customer WHERE email = ?';
-        const results = await db.query(sql, [email]);
+        db.query(sql, [email], (err, results) => {
+            if (err) {
+                throw err;
+            }
 
-        //console.log(results); // Debug: check the structure of the results
+            if (results.length > 0) {
+                const user = results[0];
 
-        if (results.length > 0) {
-            const user = results[0]; // or results[0][0]; adjust based on your DB structure
-            console.log(user.password); // Debug: check the user object
-
-            if (user && user.password === password) {
-                const { password, ...customerInfo } = user;
-                res.json(customerInfo);
+                // TODO: Password comparison logic here (use bcrypt if password is hashed)
+                if (user.password === password) {
+                    res.json({ message: 'Login successful', user }); // Return success response
+                } else {
+                    res.status(401).json({ message: 'Invalid email or password' });
+                }
             } else {
                 res.status(401).json({ message: 'Invalid email or password' });
             }
-        } else {
-            res.status(401).json({ message: 'Invalid email or password' });
-        }
+        });
     } catch (err) {
         console.error('Login error:', err);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
+
 
 
 
