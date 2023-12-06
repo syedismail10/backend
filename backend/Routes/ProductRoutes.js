@@ -1,8 +1,15 @@
 import express from 'express'
+import cors from 'cors'
+import multer from 'multer'
+import path from 'path'
 import db from '../db/dbConnection.js'
 
 const productRoute =express.Router()
 productRoute.use(express.json())
+
+productRoute.use(cors())
+
+// productRoute.use(express.static('public'))
 
 // all products tested
 
@@ -16,20 +23,22 @@ productRoute.get("/",async(req,res)=> {
     }) 
 })
 
-// singleproduct tested
-productRoute.get("/product", async(req,res)=> {
-    const sql = "SELECT * FROM `product` WHERE `product_id` = ?";
-    db.query(sql,[req.query.id],(err,data) =>{
-        if(err) 
-            return res.json("Error");
-        return res.json(data);
-        
-    }) 
+const storage = multer.diskStorage({
+    destination : (req, file,cb) => {
+        cb(null, 'public/images')
+    },
+    filename : (req,file,cb) => {
+        cb(null, file.fieldname + '-' +Date.now()+ path.extname(file.originalname))
+    }
+})
+
+const upload = multer({
+    storage:storage
 })
 
 // insert product can be done by admin tested
-productRoute.post('/', async(req, res) => {
-    const sql = "INSERT INTO product (`product_id`, `name`, `description`, `discount_id`, `quantity`, `category_id`, `price`) VALUES (?,?,?,?,?,?,?)";
+productRoute.post('/', upload.single('image'),async(req, res) => {
+    const sql = "INSERT INTO product (`product_id`, `name`, `description`, `discount_id`, `quantity`, `category_id`, `price`,`image`) VALUES (?,?,?,?,?,?,?,?)";
     const values = [
         req.body.product_id,
         req.body.name,
@@ -37,7 +46,8 @@ productRoute.post('/', async(req, res) => {
         req.body.discount_id,
         req.body.quantity,
         req.body.category_id,
-        req.body.price 
+        req.body.price, 
+        req.file.filename
     ]
     new Promise((resolve, reject) => {
         db.query(sql, values, (err, data) => {
@@ -50,6 +60,17 @@ productRoute.post('/', async(req, res) => {
     .then(data => res.json({ message: "Product inserted successfully", data }))
     .catch(err => res.status(500).json({ error: err.message }));
 });
+
+// singleproduct tested
+productRoute.get("/product", async(req,res)=> {
+    const sql = "SELECT * FROM `product` WHERE `product_id` = ?";
+    db.query(sql,[req.query.id],(err,data) =>{
+        if(err) 
+            return res.json("Error");
+        return res.json(data);
+        
+    }) 
+})
 
 // update product details tested now
 productRoute.put('/update', async(req, res) => {

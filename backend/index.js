@@ -8,6 +8,7 @@ import customerRoute from './Routes/customerRoutes.js'
 import orderRoute from './Routes/OrderRoutes.js'
 import discRoute from './Routes/DiscountRoutes.js'
 
+
 dotenv.config()
 
 const app = express()
@@ -18,6 +19,7 @@ app.use(cors());
 
 app.use(express.json())
 
+app.use(express.static('public'))
 const db =mysql.createConnection({
     host: "localhost",
     user: "root",

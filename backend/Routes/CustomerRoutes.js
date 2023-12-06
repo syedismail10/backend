@@ -1,23 +1,25 @@
 import express from 'express'
 //import asyncHandler from 'express-async-handler'
 import db from '../db/dbConnection.js';
+import bcrypt from 'bcrypt'
 
 const CustomerRoute =express.Router()
 
 CustomerRoute.post('/register', async (req, res) => {
     try {
-        const { amt_spend, customer_id, email, name, password, ph_num } = req.body;
-        const sql = 'INSERT INTO customer (amt_spend, customer_id, email, name, password, ph_num) VALUES (?, ?, ?, ?, ?, ?)';
-        const values = [
-            req.body.amt_spend,
-            req.body.customer_id,
-            req.body.email,
-            req.body.name,
-            req.body.password,
-            req.body.ph_num,
+        const { customer_id,name, email, password, ph_num, address, city,amt_spend } = req.body;
+        const sql = 'INSERT INTO customer (customer_id,name, email,ph_num,amt_spend, password, address,city) VALUES (?,?, ?, ?, ?, ?, ?,?)';
+        // const sql = 'INSERT INTO customer (amt_spend, customer_id, email, name, password, ph_num) VALUES (?, ?, ?, ?, ?, ?)';
+        // const values = [
+        //     req.body.amt_spend,
+        //     req.body.customer_id,
+        //     req.body.email,
+        //     req.body.name,
+        //     req.body.password,
+        //     req.body.ph_num,
     
-        ]
-        const result = await db.query(sql, [amt_spend, customer_id, email, name, password, ph_num]);
+        // ]
+        const result = await db.query(sql, [customer_id,name, email,ph_num, amt_spend,password,address,city]);
         res.status(201).json({ message: 'Customer product added successfully', customerId: result.insertId });
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -52,28 +54,30 @@ CustomerRoute.get('/readCustomer', async (req, res) => {
 CustomerRoute.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
+        const sql = 'SELECT * FROM customer WHERE email = ?';
+        const results = await db.query(sql, [email]);
 
-        // It's critical to hash passwords – never store or compare plain-text passwords
-        // Here, you would hash the provided password and compare it to the hashed password in the database
-        // For demonstration, the plain-text password is used directly (which is insecure)
-        const sql = 'SELECT * FROM customer WHERE email = ? AND password = ?';
-        const values = [email, password];
+        //console.log(results); // Debug: check the structure of the results
 
-        const [result] = await db.query(sql, values);
-        
-        if (result.length > 0) {
-            console.log(result);
-            // You might want to exclude the password when sending back the user info
-            const { password, ...customerInfo } = result[0];
-            res.json(customerInfo);
+        if (results.length > 0) {
+            const user = results[0]; // or results[0][0]; adjust based on your DB structure
+            console.log(user.password); // Debug: check the user object
+
+            if (user && user.password === password) {
+                const { password, ...customerInfo } = user;
+                res.json(customerInfo);
+            } else {
+                res.status(401).json({ message: 'Invalid email or password' });
+            }
         } else {
             res.status(401).json({ message: 'Invalid email or password' });
         }
     } catch (err) {
-        console.error(err);
+        console.error('Login error:', err);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
 
 
 
