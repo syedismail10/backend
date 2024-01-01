@@ -22,19 +22,19 @@ orderRoute.post('/create', async (req, res) => {
     }
   });
 
-// Read Order Items by Order ID   not working //not tested
-orderRoute.get('/readorder', async (req, res) => {
-    const orderId = req.query.order_id;
+// Read Order Items by Order ID   not working //tested
+orderRoute.get('/:id', async (req, res) => {
+    const orderId = req.params.id;
   
     if (!orderId) {
       return res.status(400).json({ error: 'Missing order_id parameter' });
     }
   
     const query = `
-      SELECT order_items.*
-      FROM order_items
-      JOIN order_details ON order_items.orderid = order_details.order_id
-      WHERE order_details.order_id = ?;
+    SELECT *
+    FROM order_items o
+    JOIN order_details ON o.order_id = order_details.order_id
+    WHERE o.order_id = ?;
     `;
   
     db.query(query, [orderId], (error, results) => {
@@ -46,7 +46,7 @@ orderRoute.get('/readorder', async (req, res) => {
     });
   });
  // Update Order Item by ID //tested
- orderRoute.put('/updateorder', async (req, res) => {
+ orderRoute.put('/', async (req, res) => {
     const orderItemId = req.query.order_id;
     const { quantity } = req.body.quantity;
   
@@ -62,4 +62,4 @@ orderRoute.get('/readorder', async (req, res) => {
     });
   }); 
 
-  export default orderRoute
+  export default orderRoute

@@ -33,7 +33,7 @@ app.use('/api/products',productRoute)
 
 app.use('/api/customer',customerRoute)
 
-app.use('/api/order',orderRoute)
+app.use('/api/orders',orderRoute)
 
 app.use('/api/discount',discRoute)
 

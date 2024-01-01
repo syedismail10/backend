@@ -62,7 +62,7 @@ productRoute.post('/', upload.single('image'),async(req, res) => {
 });
 
 // singleproduct tested
-productRoute.get("/product/:id", async(req,res)=> {
+productRoute.get("/:id", async(req,res)=> {
     const sql = "SELECT * FROM `product` WHERE `product_id` = ?";
     db.query(sql,[req.params.id],(err,data) =>{
         if(err) 
