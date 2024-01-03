@@ -72,6 +72,7 @@ productRoute.get("/:id", async(req,res)=> {
     }) 
 })
 
+
 // update product details tested now
 productRoute.put('/update', async(req, res) => {
     const product_id = req.query.product_id;
@@ -98,24 +99,23 @@ productRoute.delete('/', async(req, res) => {
     });
 });
 // search api on categoryid and name //tested
-productRoute.get('/search', async(req, res) => {
+productRoute.get('/search:name', async(req, res) => {
     // You can add more query parameters as needed
-    const { name, category_id } = req.query;
-    let sql = 'SELECT * FROM product WHERE 1=1';
-    const values = [];
-
+    const { name } = req.query.name;
+    let sql = 'SELECT * FROM product name LIKE ?';
+    console.log(name)
     // Dynamically build the query based on provided search parameters
-    if (name) {
-        sql += ' AND name LIKE ?';
-        values.push(`%${name}%`);
-    }
-    if (category_id) {
-        sql += ' AND category_id = ?';
-        values.push(category_id);
-    }
+    // if (name) {
+    //     sql += ' AND name LIKE ?';
+    //     values.push(`%${name}%`);
+    // }
+    // if (category_id) {
+    //     sql += ' AND category_id = ?';
+    //     values.push(category_id);
+    // }
 
     // Execute the query
-    db.query(sql, values, (err, result) => {
+    db.query(sql, name, (err, result) => {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
