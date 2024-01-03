@@ -67,8 +67,8 @@ productRoute.get("/:id", async(req,res)=> {
     db.query(sql,[req.params.id],(err,data) =>{
         if(err) 
             return res.json("Error");
-        return res.json(data);
-        
+        console.log(data)
+        return res.json(data);    
     }) 
 })
 
@@ -99,31 +99,55 @@ productRoute.delete('/', async(req, res) => {
     });
 });
 // search api on categoryid and name //tested
-productRoute.get('/search:name', async(req, res) => {
-    // You can add more query parameters as needed
-    const { name } = req.query.name;
-    let sql = 'SELECT * FROM product name LIKE ?';
-    console.log(name)
-    // Dynamically build the query based on provided search parameters
-    // if (name) {
-    //     sql += ' AND name LIKE ?';
-    //     values.push(`%${name}%`);
-    // }
-    // if (category_id) {
-    //     sql += ' AND category_id = ?';
-    //     values.push(category_id);
-    // }
+// productRoute.get('/search/:name', async(req, res) => {
+//     // You can add more query parameters as needed
+//     const { name } = req.params.name;
+//     let sql = 'SELECT * FROM product name LIKE ?';
+//     console.log(name)
+//     // Dynamically build the query based on provided search parameters
+//     // if (name) {
+//     //     sql += ' AND name LIKE ?';
+//     //     values.push(`%${name}%`);
+//     // }
+//     // if (category_id) {
+//     //     sql += ' AND category_id = ?';
+//     //     values.push(category_id);
+//     // }
 
-    // Execute the query
-    db.query(sql, name, (err, result) => {
+//     // Execute the query
+//     db.query(sql, name, (err, result) => {
+//         if (err) {
+//             return res.status(500).json({ error: err.message });
+//         }
+//         if (result.length === 0) {
+//             return res.status(404).json({ message: 'No products found' });
+//         }
+//         res.json(result);
+//     });
+// });
+
+productRoute.get('/:name',async(req, res) => {
+    let searchTerm = req.params.name;
+    console.log(searchTerm);
+    // Check if searchTerm is provided
+    if (!searchTerm) {
+        return res.status(400).send('Search term is required');
+    }
+
+    // Modify searchTerm to include SQL wildcard characters for partial matching
+    searchTerm = `${searchTerm}%`;
+
+    const sql = 'SELECT * FROM product WHERE name LIKE ?';
+    db.query(sql, [searchTerm], (err, results) => { // Pass parameters as an array
         if (err) {
-            return res.status(500).json({ error: err.message });
+            console.error(err);
+            return res.status(500).send('An error occurred');
         }
-        if (result.length === 0) {
-            return res.status(404).json({ message: 'No products found' });
-        }
-        res.json(result);
+        res.json(results);
     });
 });
+
+
+  
 
 export default productRoute
