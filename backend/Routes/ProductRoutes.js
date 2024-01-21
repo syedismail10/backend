@@ -5,6 +5,7 @@ import path from 'path'
 import db from '../db/dbConnection.js'
 
 const productRoute =express.Router()
+
 productRoute.use(express.json())
 
 productRoute.use(cors())
@@ -18,6 +19,7 @@ productRoute.get("/",async(req,res)=> {
     db.query(sql,(err,data) =>{
         if(err) 
             return res.json("Error");
+
         return res.json(data);
         
     }) 
@@ -62,12 +64,11 @@ productRoute.post('/', upload.single('image'),async(req, res) => {
 });
 
 // singleproduct tested
-productRoute.get("/:id", async(req,res)=> {
+productRoute.get("/search/:id", async(req,res)=> {
     const sql = "SELECT * FROM `product` WHERE `product_id` = ?";
     db.query(sql,[req.params.id],(err,data) =>{
         if(err) 
             return res.json("Error");
-        console.log(data)
         return res.json(data);    
     }) 
 })
@@ -126,9 +127,10 @@ productRoute.delete('/', async(req, res) => {
 //     });
 // });
 
-productRoute.get('/:name',async(req, res) => {
-    let searchTerm = req.params.name;
-    console.log(searchTerm);
+productRoute.get('/search', (req, res) => {
+    let searchTerm = req.query.name;
+    console.log("Search term received:",searchTerm);
+
     // Check if searchTerm is provided
     if (!searchTerm) {
         return res.status(400).send('Search term is required');
@@ -140,12 +142,14 @@ productRoute.get('/:name',async(req, res) => {
     const sql = 'SELECT * FROM product WHERE name LIKE ?';
     db.query(sql, [searchTerm], (err, results) => { // Pass parameters as an array
         if (err) {
-            console.error(err);
+            console.error("Database error:", err);
             return res.status(500).send('An error occurred');
         }
+        console.log(results)
         res.json(results);
     });
 });
+
 
 
   

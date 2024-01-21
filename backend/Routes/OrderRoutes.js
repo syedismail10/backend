@@ -6,10 +6,12 @@ const orderRoute =express.Router()
 //create order //tested
 orderRoute.post('/create', async (req, res) => {
     try {
-      const { order_id, product_id, quantity } = req.body;
-  
+      console.log(req.body.orderid)
+      const orderId= req.body.orderid
+      const items = req.body.orderItems.map(orderItem => [orderId,orderItem.product_id,orderItem.qty]);
+      
       // Insert order item into 'order_items' table
-      db.query('INSERT INTO order_items (order_id, product_id, quantity) VALUES (?, ?, ?)', [order_id, product_id, quantity], (error, results) => {
+      db.query('INSERT INTO order_items (order_id, product_id, quantity) VALUES ?', [items], (error, results) => {
         if (error) throw error;
   
         const order_item_id = results.insertId;
